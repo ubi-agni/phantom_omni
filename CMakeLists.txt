@@ -15,4 +15,8 @@ add_executable(omni src/omni.cpp)
 
 target_link_libraries(omni HD HDU rt ncurses ${catkin_LIBRARIES})
 
+install(DIRECTORY launch cfg 
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
 
