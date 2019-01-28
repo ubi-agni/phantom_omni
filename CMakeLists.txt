@@ -12,7 +12,7 @@ catkin_package(CATKIN_DEPENDS roscpp std_msgs geometry_msgs genmsg rosconsole tf
 include_directories(${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
 
 add_executable(omni src/omni.cpp)
-
+add_dependencies(omni ${${PROJECT_NAME}_EXPORTED_TARGETS})
 target_link_libraries(omni HD HDU rt ncurses ${catkin_LIBRARIES})
 
 
