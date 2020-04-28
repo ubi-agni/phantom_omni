@@ -46,7 +46,7 @@ public:
 	ros::NodeHandle n;
 	ros::Publisher joint_pub;
 
-	ros::Publisher button_pub;
+	ros::Publisher button_pub, feedback_pub;
 	ros::Subscriber haptic_sub;
 	std::string omni_name;
 
@@ -66,6 +66,11 @@ public:
 		std::ostringstream button_topic;
 		button_topic << omni_name << "_button";
 		button_pub = n.advertise<phantom_omni::PhantomButtonEvent>(button_topic.str(), 100);
+    
+    // Publish the internal position feedback too
+    std::ostringstream feedback_topic;
+		feedback_topic << omni_name << "_feedback";
+		feedback_pub = n.advertise<phantom_omni::OmniFeedback>(feedback_topic.str(), 2);
 
 		// Subscribe to NAME_force_feedback.
 		std::ostringstream force_feedback_topic;
@@ -124,10 +129,16 @@ public:
 		joint_state.name[3] = "wrist1";
 		joint_state.position[3] = -state->thetas[4] + M_PI;
 		joint_state.name[4] = "wrist2";
-		joint_state.position[4] = -state->thetas[5] - 3*M_PI/4;
+		joint_state.position[4] = -state->thetas[5];// - 3.0*M_PI_4;
 		joint_state.name[5] = "wrist3";
 		joint_state.position[5] = -state->thetas[6] - M_PI;
 		joint_pub.publish(joint_state);
+
+    phantom_omni::OmniFeedback feedback;
+    feedback.position.x = state->position[0];
+    feedback.position.y = state->position[1];
+    feedback.position.z = state->position[2];
+    feedback_pub.publish(feedback);
 
 		if ((state->buttons[0] != state->buttons_prev[0])
 				or (state->buttons[1] != state->buttons_prev[1])) {
